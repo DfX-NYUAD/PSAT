@@ -91,6 +91,7 @@ namespace ckt_n {
 	}
 
 	// memorize output values in vector
+        outputs.resize(ckt.num_outputs());
 	for (std::size_t i = 0; i < ckt.outputs.size(); i++) {
 		outputs[i] = ckt.outputs[i]->output_bit;
 	}
