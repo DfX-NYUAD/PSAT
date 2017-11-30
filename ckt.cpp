@@ -6,6 +6,8 @@
 #include "dbl.h"
 #include "ternarysat.h"
 #include "kcut.h"
+// JOHANN
+#include <fstream>
 
 namespace ckt_n {
     ckt_t::ckt_t(const ckt_t& ckt, node_t* n_cut,
@@ -2006,4 +2008,55 @@ namespace ckt_n {
         }
         return false;
     } 
+
+    // JOHANN
+    void ckt_t::readStochFile(std::string file) {
+	std::ifstream in;
+	node_t* gate;
+	std::string drop;
+	std::string gate_name;
+	std::string error_rate;
+
+	in.open(file.c_str());
+
+	if (!in.good()) {
+		std::cout << std::endl;
+		std::cout << "No such stochastic definition file: " << file << std::endl;
+		std::cout << "Circuit will behave fully deterministic" << std::endl;
+		std::cout << std::endl;
+	}
+
+	// drop header; three words
+	// # GATE_NAME ERROR_RATE[%]
+	in >> drop;
+	in >> drop;
+	in >> drop;
+
+	while (!in.eof()) {
+		in >> gate_name;
+		in >> error_rate;
+
+		if (in.eof()) {
+			break;
+		}
+
+		gate = nullptr;
+		for (auto* g : gates) {
+			if (g->name == gate_name) {
+				gate = g;
+				break;
+			}
+		}
+
+		if (gate == nullptr) {
+			std::cout << "Parsing of " << file << "; no such gate exists in the circuit: " << gate_name << std::endl;
+		}
+		else {
+			gate->error_rate = atof(error_rate.c_str());
+			std::cout << "Parsing of " << file << "; gate " << gate_name << " annotated with error rate of " << gate->error_rate << "%" << std::endl;
+		}
+	}
+
+	in.close();
+    }
 }

@@ -168,6 +168,10 @@ namespace ckt_n {
         void dump_cuts(int limit, int ht);
         void cleanup() { _cleanup(); }
         void compute_node_prob( std::vector<double>& ps );
+
+	// JOHANN
+	void readStochFile(std::string file);
+	
     private:
         void _init_map(map_t& map, ast_n::statements_t& stms);
         void _init_inputs(map_t& map, ast_n::statements_t& stms);

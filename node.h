@@ -39,6 +39,7 @@ namespace ckt_n {
         int                                             level;
 	// JOHANN
 	bool output_bit;
+	double error_rate = 0.0;
 
         unsigned num_inputs() const { return inputs.size(); }
         unsigned num_fanouts() const { return fanouts.size(); }
