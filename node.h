@@ -37,6 +37,8 @@ namespace ckt_n {
         const clause_provider_i<b2qbf::ISolver>         *prov5;
         int                                             index;
         int                                             level;
+	// JOHANN
+	bool output_bit;
 
         unsigned num_inputs() const { return inputs.size(); }
         unsigned num_fanouts() const { return fanouts.size(); }

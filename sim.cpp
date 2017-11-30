@@ -7,6 +7,14 @@ namespace ckt_n {
         : ckt(c)
     {
         ckt.init_solver(S, mappings);
+
+	// JOHANN
+	//
+	for (const auto* gate : ckt.gates_sorted) {
+
+		// boolean evaluation in eval() only for 2 inputs as of now
+		assert(gate->inputs.size() <= 2);
+	}
     }
 
     void eval_t::set_cnst(node_t* n, int val)
@@ -26,6 +34,77 @@ namespace ckt_n {
     
     void eval_t::eval(nodelist_t& input_nodes, const bool_vec_t& input_values, bool_vec_t& outputs)
     {
+	// JOHANN
+	//
+
+	if (ckt_n::DBG) {
+		std::cout << "Inputs: " << input_values << std::endl;
+	}
+
+	// assign input values to input nodes
+	//
+	for (std::size_t i = 0; i < ckt.ckt_inputs.size(); i++) {
+		ckt.ckt_inputs[i]->output_bit = input_values[i];
+	}
+
+	// now, evaluate all gates' outputs, by traversing the sorted netlist graph
+	//
+	for (auto* gate : ckt.gates_sorted) {
+
+		if (gate->func == "and") {
+			gate->output_bit = gate->inputs[0]->output_bit && gate->inputs[1]->output_bit;
+		}
+		else if (gate->func == "nand") {
+			gate->output_bit = !(gate->inputs[0]->output_bit && gate->inputs[1]->output_bit);
+		}
+		else if (gate->func == "or") {
+			gate->output_bit = gate->inputs[0]->output_bit || gate->inputs[1]->output_bit;
+		}
+		else if (gate->func == "nor") {
+			gate->output_bit = !(gate->inputs[0]->output_bit || gate->inputs[1]->output_bit);
+		}
+		else if (gate->func == "xor") {
+			gate->output_bit = gate->inputs[0]->output_bit ^ gate->inputs[1]->output_bit;
+		}
+		else if (gate->func == "xnor") {
+			gate->output_bit = !(gate->inputs[0]->output_bit ^ gate->inputs[1]->output_bit);
+		}
+		else if (gate->func == "not") {
+			gate->output_bit = !gate->inputs[0]->output_bit;
+		}
+		else if (gate->func == "buf") {
+			gate->output_bit = gate->inputs[0]->output_bit;
+		}
+		else {
+			std::cout << "ERROR: unsupported function for gate " << gate->name << ": \"" << gate->func << "\"" << std::endl;
+		}
+
+		if (ckt_n::DBG_VERBOSE) {
+			std::cout << "Gate " << gate->name << std::endl;
+			std::cout << " func: " << gate->func << std::endl;
+			std::cout << " inputs[0]: " << gate->inputs[0]->output_bit << std::endl;
+			if (gate->inputs.size() > 1) {
+				std::cout << " inputs[1]: " << gate->inputs[1]->output_bit << std::endl;
+			}
+			std::cout << " output_bit: " << gate->output_bit << std::endl;
+		}
+	}
+
+	// memorize output values in vector
+	for (std::size_t i = 0; i < ckt.outputs.size(); i++) {
+		outputs[i] = ckt.outputs[i]->output_bit;
+	}
+
+	if (ckt_n::DBG) {
+		std::cout << "Outputs (graph evaluation): " << outputs << std::endl;
+	}
+
+	// original function; run for DBG mode only
+	//
+	if (ckt_n::DBG) {
+
+	bool_vec_t outputs_SAT;
+
         using namespace sat_n;
 
         assert(input_nodes.size() == input_values.size());
@@ -48,13 +127,17 @@ namespace ckt_n {
         }
         assert(true == result);
 
-        outputs.resize(ckt.num_outputs());
-        for(unsigned i=0; i != outputs.size(); i++) {
+        outputs_SAT.resize(ckt.num_outputs());
+        for(unsigned i=0; i != outputs_SAT.size(); i++) {
             int idx = ckt.outputs[i]->get_index();
             lbool vi = S.modelValue(var(mappings[idx]));
             assert(vi.isDef());
-            outputs[i] = (vi.getBool());
+            outputs_SAT[i] = (vi.getBool());
         }
+
+	std::cout << "Outputs (SAT evaluation): " << outputs_SAT << std::endl;
+	assert(outputs == outputs_SAT);
+	}
     }
 
     void ckt_eval_t::eval(

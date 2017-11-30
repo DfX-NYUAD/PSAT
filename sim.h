@@ -9,6 +9,10 @@
 namespace ckt_n {
     typedef std::vector<bool> bool_vec_t;
 
+    // JOHANN
+    static constexpr bool DBG = true;
+    static constexpr bool DBG_VERBOSE= false;
+
     struct simulator_t {
         virtual void eval(
             const std::vector<bool>& input_values,
