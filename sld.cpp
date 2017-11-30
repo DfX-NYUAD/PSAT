@@ -103,6 +103,9 @@ int sld_main(int argc, char* argv[])
     }
 
     // try to open the verilog file.
+    //
+    // JOHANN
+    // the encrypted benchfile
     yyin = fopen(argv[optind], "rt");
     if(yyin == NULL) {
         perror(argv[optind]);
@@ -116,6 +119,9 @@ int sld_main(int argc, char* argv[])
         fclose(yyin);
 
         // read the circuit for simulation.
+	//
+	// JOHANN
+	// the original benchfile
         yyin = fopen(argv[optind+1], "rt");
         if(yyin == NULL) {
             perror(argv[optind+1]);
