@@ -1,6 +1,9 @@
 #include "sim.h"
 #include "util.h"
 
+// JOHANN
+#include <chrono>
+
 namespace ckt_n {
 
     eval_t::eval_t(ckt_t& c) 
@@ -37,7 +40,9 @@ namespace ckt_n {
 	// JOHANN
 	//
 
-	srand(time(0));
+	auto now = std::chrono::high_resolution_clock::now();
+	auto nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count();
+	srand(nanos);
 
 	if (ckt_n::DBG) {
 		std::cout << "Inputs: " << input_values << std::endl;
