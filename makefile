@@ -1,5 +1,5 @@
 PROFILE:=0
-DEBUG?=0
+DEBUG?=1
 CC=gcc-4.8
 CXX:=g++-4.8
 LD=g++-4.8
@@ -54,7 +54,7 @@ CPLEXINCLUDE:=-I/opt/ibm/ILOG/CPLEX_Studio125/cplex/include/ -I/opt/ibm/ILOG/CPL
 CPLEXLIBRARIES:=-L/opt/ibm/ILOG/CPLEX_Studio125/concert/lib/x86-64_sles10_4.1/static_pic/ -L/opt/ibm/ILOG/CPLEX_Studio125/cplex/lib/x86-64_sles10_4.1/static_pic/
 CPLEXLIBFLAGS:=-lilocplex -lcplex -lconcert -lm -lpthread
 
-CXXFLAGS:=-c -Wall -Werror -fopenmp -std=c++0x ${INCLUDE} ${DEFINES} ${DBGFLAGS} ${OPTFLAGS} ${PGFLAGS} -Wno-strict-overflow # -Wno-unused-result -Wno-unused-function
+CXXFLAGS:=-c -Werror -fopenmp -std=c++0x ${INCLUDE} ${DEFINES} ${DBGFLAGS} ${OPTFLAGS} ${PGFLAGS} -Wno-strict-overflow # -Wno-unused-result -Wno-unused-function
 LFLAGS:=-c -Wall ${INCLUDE} ${DEFINES} ${DBGFLAGS} ${OPTFLAGS} ${PGFLAGS} # -Wno-unused-result -Wno-unused-function
 LDFLAGS:=${DBGFLAGS} ${OPTFLAGS} ${PGFLAGS} $(CUDDLIBRARIES)  ${CPLEXLIBRARIES}  $(CMSATLIBRARIES) ${LGLLIBRARIES}
 SUFFIXES += .d
