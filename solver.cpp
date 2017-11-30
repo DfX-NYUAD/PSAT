@@ -324,7 +324,10 @@ bool solver_t::_verify_solution_sim(rmap_t& keysFound)
     using namespace sat_n;
     using namespace ckt_n;
 
-    srand(142857142);
+    srand(time(0));
+    // TODO after majority vote on outputs this should become relevant
+    // MAX_VERIF_ITER = 100;
+
     bool pass = true;
     for(int iter=0; iter < MAX_VERIF_ITER;  iter++) {
         vec_lit_t assumps;
