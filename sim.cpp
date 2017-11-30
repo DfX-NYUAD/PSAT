@@ -37,6 +37,8 @@ namespace ckt_n {
 	// JOHANN
 	//
 
+	srand(time(0));
+
 	if (ckt_n::DBG) {
 		std::cout << "Inputs: " << input_values << std::endl;
 	}
@@ -77,6 +79,20 @@ namespace ckt_n {
 		}
 		else {
 			std::cout << "ERROR: unsupported function for gate " << gate->name << ": \"" << gate->func << "\"" << std::endl;
+		}
+
+		// post-process stochastic gates: they may switch their outputs depending on their error rate
+		//
+		if (gate->error_rate > 0.0) {
+
+			if (
+					// random double between 0.0 and 100.0, excluding 100.0 itself
+					(100.0 * (static_cast<double>(rand()) / RAND_MAX))
+					// chances that the random value falls below error_rate are approx error_rate %
+					< gate->error_rate
+			   ) {
+				gate->output_bit = !gate->output_bit;
+			}
 		}
 
 		if (ckt_n::DBG_VERBOSE) {
