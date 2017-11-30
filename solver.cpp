@@ -324,15 +324,29 @@ bool solver_t::_verify_solution_sim(rmap_t& keysFound)
     using namespace sat_n;
     using namespace ckt_n;
 
-    srand(time(0));
-    // TODO after majority vote on outputs this should become relevant
-    // MAX_VERIF_ITER = 100;
+    // JOHANN
+    //
+    int successful_iter = 0;
+    int steps = 0;
+    bool key_extracted = false;
 
-    bool pass = true;
+    srand(time(0));
+    MAX_VERIF_ITER = 1e04;
+    std::cout << "Verifying key for " << MAX_VERIF_ITER << " test patterns ..." << std::endl;
+
     for(int iter=0; iter < MAX_VERIF_ITER;  iter++) {
         vec_lit_t assumps;
         std::vector<bool> input_values;
         std::vector<bool> output_values;
+
+	    // JOHANN
+	    //
+	    bool pass = true;
+
+	    if (iter % (MAX_VERIF_ITER / 10) == 0) {
+		    std::cout << steps * 10 << " \% done ..." << std::endl;
+		    steps++;
+	    }
 
         for(unsigned i=0; i != cktinput_literals.size(); i++) {
             bool vi = bool(rand() % 2);
@@ -365,8 +379,11 @@ bool solver_t::_verify_solution_sim(rmap_t& keysFound)
                 pass = false;
             }
         }
-        if(iter == 0) {
+	// JOHANN
+//        if(iter == 0) {
+	if (pass && !key_extracted) {
             _extractSolution(keysFound);
+	    key_extracted = true;
         }
         if(verbose) std::cout << std::endl;
         if(!pass) {
@@ -374,11 +391,21 @@ bool solver_t::_verify_solution_sim(rmap_t& keysFound)
                 dbl.dump_solver_state(std::cout, S, lmap);
                 std::cout << std::endl;
             }
-            std::cout << "sim failed." << std::endl;
-            break;
+	// JOHANN
+//            std::cout << "sim failed." << std::endl;
+//            break;
         }
+	else {
+		successful_iter++;
+	}
     }
-    return pass;
+
+	// JOHANN
+    std::cout << "Done; successful test coverage rate: " << 100.0 * static_cast<double>(successful_iter) / static_cast<double>(MAX_VERIF_ITER) << " \%" << std::endl;
+    std::cout << " Note that this rate also represents the error rate of the stochastic circuit." << std::endl;
+
+//    return pass;
+	return true;
 }
 
 void solver_t::_extractSolution(rmap_t& keysFound)
