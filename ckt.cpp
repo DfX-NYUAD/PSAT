@@ -2053,7 +2053,10 @@ namespace ckt_n {
 		}
 		else {
 			gate->error_rate = atof(error_rate.c_str());
-			std::cout << "Parsing of " << file << "; gate " << gate_name << " annotated with error rate of " << gate->error_rate << "%" << std::endl;
+
+			if (ckt_t::DBG) {
+				std::cout << "Parsing of " << file << "; gate " << gate_name << " annotated with error rate of " << gate->error_rate << "%" << std::endl;
+			}
 		}
 	}
 

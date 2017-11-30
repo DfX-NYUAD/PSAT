@@ -18,6 +18,9 @@ namespace ckt_n {
 
     struct ckt_t
     {
+	    // JOHANN
+	    static constexpr bool DBG = false;
+
         typedef std::map<std::string, node_t*> map_t;
         typedef std::map<node_t*, node_t*> node_map_t;
 
