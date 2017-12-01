@@ -36,10 +36,12 @@ namespace ckt_n {
 
 	    // JOHANN
 	    //
-	    // for handling of stochastic circuits; value is provided via the .stoch file
-	    //
+	    // for handling of stochastic circuits
 	    // sample multiple output observations for one particular input pattern, and subsequently pick the most common pattern as ground truth
-	    bool IO_sampling = false;
+	    //
+	    // values are also updated from the .stoch file
+	    bool IO_sampling_flag = false;
+	    unsigned IO_sampling_iter = 1e03;
 
         ckt_t(ast_n::statements_t& stms);           // constructor from bench file.
         ckt_t(nodepair_list_t& pair_map);           // circuit doubling constructor.

@@ -2028,8 +2028,9 @@ namespace ckt_n {
 		return;
 	}
 
-	// drop header; two words
-	// # OUTPUT_SAMPLING
+	// drop header; three words
+	// # OUTPUT_SAMPLING_ON OUTPUT_SAMPLING_ITERATIONS
+	in >> drop;
 	in >> drop;
 	in >> drop;
 
@@ -2037,11 +2038,14 @@ namespace ckt_n {
 	in >> sampling_flag;
 
 	if (sampling_flag == "1" || sampling_flag == "true") {
-		IO_sampling = true;
+		IO_sampling_flag = true;
 	}
 	else {
-		IO_sampling = false;
+		IO_sampling_flag = false;
 	}
+
+	// also parse sampling iterations
+	in >> IO_sampling_iter;
 
 	// drop header; three words
 	// # GATE_NAME ERROR_RATE[%]
@@ -2084,12 +2088,12 @@ namespace ckt_n {
 	// in case no stochastic gates was defined, sampling of output patterns is superfluous
 	//
 	if (!any_stoch_gate) {
-		IO_sampling = false;
+		IO_sampling_flag = false;
 	}
 
 	std::cout << "Sampling of output observations for stochastic circuits: ";
-	if (IO_sampling) {
-		std::cout << "on" << std::endl;
+	if (IO_sampling_flag) {
+		std::cout << "on; sampling iterations (for each pattern): " << IO_sampling_iter << std::endl;
 	}
 	else {
 		std::cout << "off" << std::endl;

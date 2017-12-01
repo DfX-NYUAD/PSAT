@@ -327,7 +327,7 @@ bool solver_t::_verify_solution_sim(rmap_t& keysFound)
     // JOHANN
     //
     int successful_iter = 0;
-    int steps = 0;
+    int steps = 1;
     bool key_extracted = false;
 
     srand(time(0));
@@ -342,11 +342,6 @@ bool solver_t::_verify_solution_sim(rmap_t& keysFound)
 	    // JOHANN
 	    //
 	    bool pass = true;
-
-	    if (iter % (MAX_VERIF_ITER / 10) == 0) {
-		    std::cout << steps * 10 << " \% done ..." << std::endl;
-		    steps++;
-	    }
 
         for(unsigned i=0; i != cktinput_literals.size(); i++) {
             bool vi = bool(rand() % 2);
@@ -398,11 +393,17 @@ bool solver_t::_verify_solution_sim(rmap_t& keysFound)
 	else {
 		successful_iter++;
 	}
+
+	// JOHANN
+	    if ((iter + 1) % (MAX_VERIF_ITER / 10) == 0) {
+		    std::cout << steps * 10 << " \% done ..." << std::endl;
+		    steps++;
+	    }
     }
 
 	// JOHANN
     std::cout << "Done; successful test coverage rate: " << 100.0 * static_cast<double>(successful_iter) / static_cast<double>(MAX_VERIF_ITER) << " \%" << std::endl;
-    if (simckt.IO_sampling) {
+    if (simckt.IO_sampling_flag) {
 	    std::cout << " Note that this rate already covers the majority votes of I/O sampling for the stochastic circuit, i.e., testing only considers the most promising outputs as ground truths." << std::endl;
     }
 

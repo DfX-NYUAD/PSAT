@@ -179,7 +179,7 @@ namespace ckt_n {
 	    //
 	    // sample the output for the input several times, and pick only the most common observation as ground truth to be used for further SAT solving
 	    //
-	    if (sim.ckt.IO_sampling) {
+	    if (sim.ckt.IO_sampling_flag) {
 
 			auto now = std::chrono::high_resolution_clock::now();
 			auto nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count();
@@ -188,12 +188,10 @@ namespace ckt_n {
 		    std::unordered_map<std::vector<bool>, unsigned> output_samples_counts;
 		    std::multimap<unsigned, std::vector<bool>, std::greater<unsigned>> output_samples_sorted;
 
-		    unsigned N = 1e03;
-
 		    // sample outputs N times (for the same input), track the counts of the different observed output patterns, select the most promising one as ground truth for
 		    // this input pattern
 		    //
-		    for (unsigned i = 0; i < N; i++) {
+		    for (unsigned i = 0; i < sim.ckt.IO_sampling_iter; i++) {
 
 			    sim.eval(inputs, input_values, output_values);
 
@@ -245,7 +243,7 @@ namespace ckt_n {
 		    //
 		    else {
 			    // the random value is between [0, N]; the pattern which falls within that range will be picked
-			    unsigned r = rand() % (N + 1);
+			    unsigned r = rand() % (sim.ckt.IO_sampling_iter + 1);
 			    if (ckt_n::DBG) {
 				    std::cout << "r: " << r << std::endl;
 			    }
