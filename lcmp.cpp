@@ -4,23 +4,24 @@
 #include "ckt.h"
 #include "sld.h"
 
+// JOHANN: swapped order of original and encrypted circuit
 int lcmp_main(int argc, char* argv[])
 {
     if(argc != 4) {
         std::cerr << "Syntax error." << std::endl << "Usage: " << std::endl;
-        std::cerr << "    " << argv[0] << " <ckt-orignal> <ckt-encrypted> key=<value>"  << std::endl;
+        std::cerr << "    " << argv[0] << " <ckt-encrypted> <ckt-orignal> key=<value>"  << std::endl;
         return 1;
     }
     
-    // read ckt1.
+    // read original circuit
     yyin = NULL;
-    yyin = fopen(argv[1], "rt");
+    yyin = fopen(argv[2], "rt");
     if(yyin == NULL) {
-        perror(argv[1]);
+        perror(argv[2]);
         return 1;
     }
     if(yyparse() != 0) {
-        std::cerr << "Syntax error in " << argv[1] << std::endl;
+        std::cerr << "Syntax error in " << argv[2] << std::endl;
         return 1;
     }
     ckt_n::ckt_t ckt1(*ast_n::statements);
@@ -33,11 +34,11 @@ int lcmp_main(int argc, char* argv[])
     }
 
 
-    // read ckt2
+    // read encrypted circuit
     yyin = NULL;
-    yyin = fopen(argv[2], "rt");
+    yyin = fopen(argv[1], "rt");
     if(yyin == NULL) {
-        perror(argv[2]);
+        perror(argv[1]);
         return 1;
     }
     if(yyparse() != 0) {
