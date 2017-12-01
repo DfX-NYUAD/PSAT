@@ -1,5 +1,7 @@
 #include "sim.h"
 #include "util.h"
+#include <unordered_map>
+#include <map>
 
 // JOHANN
 #include <chrono>
@@ -86,7 +88,7 @@ namespace ckt_n {
 			std::cout << "ERROR: unsupported function for gate " << gate->name << ": \"" << gate->func << "\"" << std::endl;
 		}
 
-		// post-process stochastic gates: they may switch their outputs depending on their error rate
+		// post-process stochastic gates: they may experience flipping of their outputs depending on their error rate
 		//
 		if (gate->error_rate > 0.0) {
 
@@ -167,7 +169,67 @@ namespace ckt_n {
         std::vector<bool>& output_values
     )
     {
-        sim.eval(inputs, input_values, output_values);
+	    // JOHANN
+	    //
+	    // sample the output for the input several times, and pick only the most common observation as ground truth to be used for further SAT solving
+	    //
+	    if (sim.ckt.IO_sampling) {
+
+		    std::unordered_map<std::vector<bool>, unsigned> output_samples_counts;
+		    std::multimap<unsigned, std::vector<bool>, std::greater<unsigned>> output_samples_sorted;
+
+		    unsigned N = 100;
+
+		    // sample outputs N times (for the same input), track the counts of the different observed output patterns, select the most promising one as ground truth for
+		    // this input pattern
+		    //
+		    for (unsigned i = 0; i < N; i++) {
+
+			    sim.eval(inputs, input_values, output_values);
+
+			    // first occurrence of this pattern, init map for this key/pattern
+			    if (output_samples_counts.find(output_values) == output_samples_counts.end()) {
+				    output_samples_counts[output_values] = 1;
+			    }
+			    else {
+				    output_samples_counts[output_values]++;
+			    }
+
+			    if (ckt_n::DBG) {
+				    std::cout << "Output: " << output_values << std::endl;
+				    std::cout << " Samples count: " << output_samples_counts[output_values] << std::endl;
+			    }
+		    }
+
+		    // convert sample counts into sorted multimap, with highest counts coming first
+		    //
+		    for (auto const& count : output_samples_counts) {
+
+			    output_samples_sorted.emplace(std::make_pair(
+						    count.second,
+						    count.first
+					    ));
+		    }
+
+		    // consider the most common pattern as the ground truth
+		    output_values = (*output_samples_sorted.begin()).second;
+
+		    if (ckt_n::DBG) {
+			    for (auto const& sample : output_samples_sorted) {
+				    std::cout << "Output: " << sample.second << std::endl;
+				    std::cout << " Samples count: " << sample.first << std::endl;
+			    }
+			    std::cout << "Consider output: " << output_values << std::endl;
+			    std::cout << std::endl;
+		    }
+	    }
+
+	    // JOHANN
+	    // original code, calls evaluation only once
+	    //
+	    else {
+		    sim.eval(inputs, input_values, output_values);
+	    }
     }
 
     void convert(uint64_t v, bool_vec_t& result)

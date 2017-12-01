@@ -402,7 +402,9 @@ bool solver_t::_verify_solution_sim(rmap_t& keysFound)
 
 	// JOHANN
     std::cout << "Done; successful test coverage rate: " << 100.0 * static_cast<double>(successful_iter) / static_cast<double>(MAX_VERIF_ITER) << " \%" << std::endl;
-    std::cout << " Note that this rate also represents the error rate of the stochastic circuit." << std::endl;
+    if (simckt.IO_sampling) {
+	    std::cout << " Note that this rate already covers the majority votes of I/O sampling for the stochastic circuit, i.e., testing only considers the most promising outputs as ground truths." << std::endl;
+    }
 
 //    return pass;
 	return true;
