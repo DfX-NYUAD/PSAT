@@ -11,6 +11,9 @@
 #include <sys/resource.h>
 #include <list>
 
+// JOHANN
+#include <chrono>
+
 struct keyset_value_t
 {
     std::vector<unsigned> keys;

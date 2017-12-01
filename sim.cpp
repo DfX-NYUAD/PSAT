@@ -49,6 +49,12 @@ namespace ckt_n {
 			gate->func_enum = FUNC::UNDEF;
 		}
 	}
+
+	// init srand with long and high-resolution timing seed
+	//
+	auto now = std::chrono::high_resolution_clock::now();
+	auto nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count();
+	srand(nanos);
     }
 
     void eval_t::set_cnst(node_t* n, int val)
@@ -70,10 +76,6 @@ namespace ckt_n {
     {
 	// JOHANN
 	//
-
-	auto now = std::chrono::high_resolution_clock::now();
-	auto nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count();
-	srand(nanos);
 
 	if (ckt_n::DBG_VERBOSE) {
 		std::cout << "Inputs: " << input_values << std::endl;
@@ -209,10 +211,6 @@ namespace ckt_n {
 	    // sample the output for the input several times, and pick only the most common observation as ground truth to be used for further SAT solving
 	    //
 	    if (sim.ckt.IO_sampling_flag) {
-
-			auto now = std::chrono::high_resolution_clock::now();
-			auto nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count();
-			srand(nanos);
 
 		    std::unordered_map<std::vector<bool>, unsigned> output_samples_counts;
 		    std::multimap<unsigned, std::vector<bool>, std::greater<unsigned>> output_samples_sorted;

@@ -77,6 +77,14 @@ solver_t::solver_t(ckt_n::ckt_t& c, ckt_n::ckt_t& s, int verb)
 
     dbl_keyinput_flags.resize(S.nVars(), false);
     dbl.dbl->init_keyinput_map(lmap, dbl_keyinput_flags);
+
+    // JOHANN
+    //
+	// init srand with long and high-resolution timing seed
+	//
+	auto now = std::chrono::high_resolution_clock::now();
+	auto nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count();
+	srand(nanos);
 }
 
 
@@ -330,7 +338,6 @@ bool solver_t::_verify_solution_sim(rmap_t& keysFound)
     int steps = 1;
     bool key_extracted = false;
 
-    srand(time(0));
     MAX_VERIF_ITER = 1e04;
     std::cout << "Verifying key for " << MAX_VERIF_ITER << " test patterns ..." << std::endl;
 
