@@ -2025,6 +2025,7 @@ namespace ckt_n {
 		std::cout << "No such stochastic definition file: " << file << std::endl;
 		std::cout << "Circuit will behave fully deterministic" << std::endl;
 		std::cout << std::endl;
+		return;
 	}
 
 	// drop header; two words
