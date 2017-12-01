@@ -2014,6 +2014,7 @@ namespace ckt_n {
 	std::ifstream in;
 	node_t* gate;
 	std::string drop;
+	std::string sampling_flag;
 	std::string gate_name;
 	std::string error_rate;
 
@@ -2026,12 +2027,30 @@ namespace ckt_n {
 		std::cout << std::endl;
 	}
 
+	// drop header; two words
+	// # OUTPUT_SAMPLING
+	in >> drop;
+	in >> drop;
+
+	// parse sampling flag; if true sample multiple output observations for one particular input pattern, and subsequently pick the most common pattern as ground truth
+	in >> sampling_flag;
+
+	if (sampling_flag == "1" || sampling_flag == "true") {
+		IO_sampling = true;
+	}
+	else {
+		IO_sampling = false;
+	}
+
 	// drop header; three words
 	// # GATE_NAME ERROR_RATE[%]
 	in >> drop;
 	in >> drop;
 	in >> drop;
 
+	// parse stochastic gates and their error rates
+	//
+	bool any_stoch_gate = false;
 	while (!in.eof()) {
 		in >> gate_name;
 		in >> error_rate;
@@ -2044,6 +2063,7 @@ namespace ckt_n {
 		for (auto* g : gates) {
 			if (g->name == gate_name) {
 				gate = g;
+				any_stoch_gate = true;
 				break;
 			}
 		}
@@ -2058,6 +2078,20 @@ namespace ckt_n {
 				std::cout << "Parsing of " << file << "; gate " << gate_name << " annotated with error rate of " << gate->error_rate << "%" << std::endl;
 			}
 		}
+	}
+
+	// in case no stochastic gates was defined, sampling of output patterns is superfluous
+	//
+	if (!any_stoch_gate) {
+		IO_sampling = false;
+	}
+
+	std::cout << "Sampling of output observations for stochastic circuits: ";
+	if (IO_sampling) {
+		std::cout << "on" << std::endl;
+	}
+	else {
+		std::cout << "off" << std::endl;
 	}
 
 	in.close();

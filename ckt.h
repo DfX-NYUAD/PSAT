@@ -34,6 +34,13 @@ namespace ckt_n {
         nodelist_t gates_sorted;
         nodelist_t nodes_sorted;
 
+	    // JOHANN
+	    //
+	    // for handling of stochastic circuits; value is provided via the .stoch file
+	    //
+	    // sample multiple output observations for one particular input pattern, and subsequently pick the most common pattern as ground truth
+	    bool IO_sampling = false;
+
         ckt_t(ast_n::statements_t& stms);           // constructor from bench file.
         ckt_t(nodepair_list_t& pair_map);           // circuit doubling constructor.
         ckt_t(const ckt_t& c1, const ckt_t& c2);    // circuit comparison constructor.
