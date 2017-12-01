@@ -2017,6 +2017,7 @@ namespace ckt_n {
 	std::string sampling_flag;
 	std::string gate_name;
 	std::string error_rate;
+	unsigned stochastic_gates = 0;
 
 	in.open(file.c_str());
 
@@ -2055,7 +2056,6 @@ namespace ckt_n {
 
 	// parse stochastic gates and their error rates
 	//
-	bool any_stoch_gate = false;
 	while (!in.eof()) {
 		in >> gate_name;
 		in >> error_rate;
@@ -2068,7 +2068,7 @@ namespace ckt_n {
 		for (auto* g : gates) {
 			if (g->name == gate_name) {
 				gate = g;
-				any_stoch_gate = true;
+				stochastic_gates++;
 				break;
 			}
 		}
@@ -2084,16 +2084,18 @@ namespace ckt_n {
 			}
 		}
 	}
+	std::cout << "Stochastic gates count: " << stochastic_gates << std::endl;
 
 	// in case no stochastic gates was defined, sampling of output patterns is superfluous
 	//
-	if (!any_stoch_gate) {
+	if (stochastic_gates == 0) {
 		IO_sampling_flag = false;
 	}
 
 	std::cout << "Sampling of output observations for stochastic circuits: ";
 	if (IO_sampling_flag) {
-		std::cout << "on; sampling iterations (for each pattern): " << IO_sampling_iter << std::endl;
+		std::cout << "on" << std::endl;
+		std::cout << " Sampling iterations (for each pattern): " << IO_sampling_iter << std::endl;
 	}
 	else {
 		std::cout << "off" << std::endl;

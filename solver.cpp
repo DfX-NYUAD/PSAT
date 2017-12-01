@@ -337,9 +337,12 @@ bool solver_t::_verify_solution_sim(rmap_t& keysFound)
     int successful_iter = 0;
     int steps = 1;
     bool key_extracted = false;
-
     MAX_VERIF_ITER = 1e03;
+
     std::cout << "Verifying key for " << MAX_VERIF_ITER << " test patterns ..." << std::endl;
+    if (simckt.IO_sampling_flag) {
+	    std::cout << " Sampling and selection of output patterns is on" << std::endl;
+    }
 
     for(int iter=0; iter < MAX_VERIF_ITER;  iter++) {
         vec_lit_t assumps;
@@ -411,7 +414,10 @@ bool solver_t::_verify_solution_sim(rmap_t& keysFound)
 	// JOHANN
     std::cout << "Done; successful test coverage rate: " << 100.0 * static_cast<double>(successful_iter) / static_cast<double>(MAX_VERIF_ITER) << " \%" << std::endl;
     if (simckt.IO_sampling_flag) {
-	    std::cout << " Note that this rate already covers the majority votes of I/O sampling for the stochastic circuit, i.e., testing only considers the most promising outputs as ground truths." << std::endl;
+	    std::cout << " This rate DOES cover the sampling and selection of I/O patterns to capture the behaviour of the stochastic circuit, i.e., testing only considers the most promising output patterns for each individual input as ground truths." << std::endl;
+    }
+    else {
+	    std::cout << " This rate DOESN'T cover the sampling and selection of I/O patterns to capture the behaviour of the stochastic circuit, i.e., testing considers any output pattern as is, which may be erroneous." << std::endl;
     }
 
 //    return pass;
