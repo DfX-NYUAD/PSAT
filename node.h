@@ -18,6 +18,9 @@ namespace ckt_n {
     typedef std::vector<node_t*> nodelist_t;
     typedef std::set<node_t*> nodeset_t;
 
+	// JOHANN
+	enum class FUNC : unsigned {UNDEF, AND, NAND, OR, NOR, XOR, XNOR, INV, BUF};
+
     struct node_t {
 
         enum { INPUT, GATE }                            type;
@@ -40,6 +43,7 @@ namespace ckt_n {
 	// JOHANN
 	bool output_bit;
 	double error_rate = 0.0;
+	FUNC func_enum = FUNC::UNDEF;
 
         unsigned num_inputs() const { return inputs.size(); }
         unsigned num_fanouts() const { return fanouts.size(); }

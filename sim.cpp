@@ -15,10 +15,39 @@ namespace ckt_n {
 
 	// JOHANN
 	//
-	for (const auto* gate : ckt.gates_sorted) {
+	for (auto* gate : ckt.gates) {
 
-		// boolean evaluation in eval() only for 2 inputs as of now
+		// sanity check for inputs; boolean evaluation in eval() implemented only for 2 inputs
 		assert(gate->inputs.size() <= 2);
+
+		// assign more efficient unsigned enum to gates; avoids repetitive calls to str::compare in eval()
+		if (gate->func == "and") {
+			gate->func_enum = FUNC::AND;
+		}
+		else if (gate->func == "nand") {
+			gate->func_enum = FUNC::NAND;
+		}
+		else if (gate->func == "or") {
+			gate->func_enum = FUNC::OR;
+		}
+		else if (gate->func == "nor") {
+			gate->func_enum = FUNC::NOR;
+		}
+		else if (gate->func == "xor") {
+			gate->func_enum = FUNC::XOR;
+		}
+		else if (gate->func == "xnor") {
+			gate->func_enum = FUNC::XNOR;
+		}
+		else if (gate->func == "not") {
+			gate->func_enum = FUNC::INV;
+		}
+		else if (gate->func == "buf") {
+			gate->func_enum = FUNC::BUF;
+		}
+		else {
+			gate->func_enum = FUNC::UNDEF;
+		}
 	}
     }
 
@@ -60,28 +89,28 @@ namespace ckt_n {
 	//
 	for (auto* gate : ckt.gates_sorted) {
 
-		if (gate->func == "and") {
+		if (gate->func_enum == FUNC::AND) {
 			gate->output_bit = gate->inputs[0]->output_bit && gate->inputs[1]->output_bit;
 		}
-		else if (gate->func == "nand") {
+		else if (gate->func_enum == FUNC::NAND) {
 			gate->output_bit = !(gate->inputs[0]->output_bit && gate->inputs[1]->output_bit);
 		}
-		else if (gate->func == "or") {
+		else if (gate->func_enum == FUNC::OR) {
 			gate->output_bit = gate->inputs[0]->output_bit || gate->inputs[1]->output_bit;
 		}
-		else if (gate->func == "nor") {
+		else if (gate->func_enum == FUNC::NOR) {
 			gate->output_bit = !(gate->inputs[0]->output_bit || gate->inputs[1]->output_bit);
 		}
-		else if (gate->func == "xor") {
+		else if (gate->func_enum == FUNC::XOR) {
 			gate->output_bit = gate->inputs[0]->output_bit ^ gate->inputs[1]->output_bit;
 		}
-		else if (gate->func == "xnor") {
+		else if (gate->func_enum == FUNC::XNOR) {
 			gate->output_bit = !(gate->inputs[0]->output_bit ^ gate->inputs[1]->output_bit);
 		}
-		else if (gate->func == "not") {
+		else if (gate->func_enum == FUNC::INV) {
 			gate->output_bit = !gate->inputs[0]->output_bit;
 		}
-		else if (gate->func == "buf") {
+		else if (gate->func_enum == FUNC::BUF) {
 			gate->output_bit = gate->inputs[0]->output_bit;
 		}
 		else {
