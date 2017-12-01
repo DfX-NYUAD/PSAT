@@ -136,8 +136,7 @@ int sld_main(int argc, char* argv[])
 
 	// JOHANN
 	// also read in the .stoch file, which defines the stochastic gates and their error rate
-	// file syntax: GATE_NAME ERROR_RATE[%]
-	simckt.readStochFile(std::string(argv[optind + 1]) + ".stoch");
+	simckt.readStochFile(std::string(argv[optind]) + ".stoch");
 
         if(simckt.num_key_inputs() != 0) {
             std::cout << "Error. Circuit for simulation musn't have key inputs." << std::endl;
