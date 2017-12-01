@@ -1,5 +1,5 @@
 PROFILE:=0
-DEBUG?=1
+DEBUG?=0
 CC=gcc-4.8
 CXX:=g++-4.8
 LD=g++-4.8
