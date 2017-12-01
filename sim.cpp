@@ -46,7 +46,7 @@ namespace ckt_n {
 	auto nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count();
 	srand(nanos);
 
-	if (ckt_n::DBG) {
+	if (ckt_n::DBG_VERBOSE) {
 		std::cout << "Inputs: " << input_values << std::endl;
 	}
 
@@ -119,13 +119,13 @@ namespace ckt_n {
 		outputs[i] = ckt.outputs[i]->output_bit;
 	}
 
-	if (ckt_n::DBG) {
+	if (ckt_n::DBG_VERBOSE) {
 		std::cout << "Outputs (graph evaluation): " << outputs << std::endl;
 	}
 
 	// original function; run for DBG mode only
 	//
-	if (ckt_n::DBG) {
+	if (ckt_n::DBG_SAT) {
 
 	bool_vec_t outputs_SAT;
 
@@ -143,11 +143,15 @@ namespace ckt_n {
 
         bool result = S.solve(assump);
         if(!result) {
-            std::cout << "inputs: ";
+		if (ckt_n::DBG_VERBOSE) {
+		    std::cout << "inputs: ";
+		}
             for(unsigned i=0; i != input_nodes.size(); i++) {
                 std::cout << input_nodes[i]->name << " ";
             }
-            std::cout << std::endl;
+		if (ckt_n::DBG_VERBOSE) {
+		    std::cout << std::endl;
+		}
         }
         assert(true == result);
 
@@ -159,7 +163,9 @@ namespace ckt_n {
             outputs_SAT[i] = (vi.getBool());
         }
 
-	std::cout << "Outputs (SAT evaluation): " << outputs_SAT << std::endl;
+	if (ckt_n::DBG_VERBOSE) {
+		std::cout << "Outputs (SAT evaluation): " << outputs_SAT << std::endl;
+	}
 	assert(outputs == outputs_SAT);
 	}
     }
@@ -175,10 +181,14 @@ namespace ckt_n {
 	    //
 	    if (sim.ckt.IO_sampling) {
 
+			auto now = std::chrono::high_resolution_clock::now();
+			auto nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count();
+			srand(nanos);
+
 		    std::unordered_map<std::vector<bool>, unsigned> output_samples_counts;
 		    std::multimap<unsigned, std::vector<bool>, std::greater<unsigned>> output_samples_sorted;
 
-		    unsigned N = 100;
+		    unsigned N = 1e03;
 
 		    // sample outputs N times (for the same input), track the counts of the different observed output patterns, select the most promising one as ground truth for
 		    // this input pattern
@@ -195,7 +205,7 @@ namespace ckt_n {
 				    output_samples_counts[output_values]++;
 			    }
 
-			    if (ckt_n::DBG) {
+			    if (ckt_n::DBG_VERBOSE) {
 				    std::cout << "Output: " << output_values << std::endl;
 				    std::cout << " Samples count: " << output_samples_counts[output_values] << std::endl;
 			    }
@@ -211,14 +221,50 @@ namespace ckt_n {
 					    ));
 		    }
 
-		    // consider the most common pattern as the ground truth
-		    output_values = (*output_samples_sorted.begin()).second;
-
 		    if (ckt_n::DBG) {
 			    for (auto const& sample : output_samples_sorted) {
 				    std::cout << "Output: " << sample.second << std::endl;
 				    std::cout << " Samples count: " << sample.first << std::endl;
 			    }
+		    }
+
+		    // in case the most common pattern is dominant, i.e., occurs more frequently than the next two patterns taken together, consider it directly as ground truth
+		    auto iter = output_samples_sorted.begin();
+		    unsigned first = (*iter).first;
+		    ++iter;
+		    unsigned second_third = (*iter).first;
+		    ++iter;
+		    second_third += (*iter).first;
+
+		    if (first > second_third) {
+			output_values = (*output_samples_sorted.begin()).second;
+		    }
+		    // otherwise, even the most common pattern is not dominant
+		    // then, randomly select a pattern based on its occurrence
+		    // (the higher its count, the more likely a pattern will be chosen)
+		    //
+		    else {
+			    // the random value is between [0, N]; the pattern which falls within that range will be picked
+			    unsigned r = rand() % (N + 1);
+			    if (ckt_n::DBG) {
+				    std::cout << "r: " << r << std::endl;
+			    }
+
+			    unsigned count = 0;
+			    for (auto const& sample : output_samples_sorted) {
+
+				    count +=  sample.first;
+
+				    // the first pattern where the cumulative count goes just at or beyond the random value should be the one to pick; this is to mimic a random
+				    // selection weighted by the counts
+				    if (count >= r) {
+					    output_values = sample.second;
+					    break;
+				    }
+			    }
+		    }
+		    
+		    if (ckt_n::DBG) {
 			    std::cout << "Consider output: " << output_values << std::endl;
 			    std::cout << std::endl;
 		    }

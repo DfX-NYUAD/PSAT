@@ -11,7 +11,8 @@ namespace ckt_n {
 
     // JOHANN
     static constexpr bool DBG = false;
-    static constexpr bool DBG_VERBOSE= false;
+    static constexpr bool DBG_VERBOSE = false;
+    static constexpr bool DBG_SAT = false;
 
     struct simulator_t {
         virtual void eval(
