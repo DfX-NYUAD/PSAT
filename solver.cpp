@@ -338,7 +338,7 @@ bool solver_t::_verify_solution_sim(rmap_t& keysFound)
     int steps = 1;
     bool key_extracted = false;
 
-    MAX_VERIF_ITER = 1e04;
+    MAX_VERIF_ITER = 1e03;
     std::cout << "Verifying key for " << MAX_VERIF_ITER << " test patterns ..." << std::endl;
 
     for(int iter=0; iter < MAX_VERIF_ITER;  iter++) {
