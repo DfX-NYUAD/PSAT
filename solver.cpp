@@ -338,6 +338,8 @@ bool solver_t::_verify_solution_sim(rmap_t& keysFound)
     int steps = 1;
     bool key_extracted = false;
     MAX_VERIF_ITER = 1e03;
+    double test_coverage;
+    double HD = 0.0;
 
     std::cout << "Verifying key for " << MAX_VERIF_ITER << " test patterns ..." << std::endl;
     if (simckt.IO_sampling_flag) {
@@ -382,6 +384,9 @@ bool solver_t::_verify_solution_sim(rmap_t& keysFound)
             }
             if(!(ri.isDef() && ri.getBool() == vi)) { 
                 pass = false;
+	// JOHANN
+	// count all the occurrences where one bit is flipped
+		HD++;
             }
         }
 	// JOHANN
@@ -405,20 +410,27 @@ bool solver_t::_verify_solution_sim(rmap_t& keysFound)
 	}
 
 	// JOHANN
-	    if ((iter + 1) % (MAX_VERIF_ITER / 10) == 0) {
-		    std::cout << steps * 10 << " \% done ..." << std::endl;
+	    if ((iter + 1) % (MAX_VERIF_ITER / 20) == 0) {
+		    std::cout << steps * 5 << " \% done ..." << std::endl;
 		    steps++;
 	    }
     }
 
 	// JOHANN
-    std::cout << "Done; successful test coverage rate: " << 100.0 * static_cast<double>(successful_iter) / static_cast<double>(MAX_VERIF_ITER) << " \%" << std::endl;
+	test_coverage = 100.0 * static_cast<double>(successful_iter) / static_cast<double>(MAX_VERIF_ITER);
+	HD /= static_cast<double>(MAX_VERIF_ITER * output_values.size());
+	HD *= 100.0;
+
+    std::cout << "Test coverage rate: " << test_coverage << " \%" << std::endl;
+    std::cout << "Output error rate (inverse of coverage rate): " << 100 - test_coverage << " \%" << std::endl;
+    std::cout << "Average Hamming distance: " << HD << " \%" << std::endl;
     if (simckt.IO_sampling_flag) {
-	    std::cout << " This rate DOES cover the sampling and selection of I/O patterns to capture the behaviour of the stochastic circuit, i.e., testing only considers the most promising output patterns for each individual input as ground truths." << std::endl;
+	    std::cout << " These metrics DO cover the sampling of I/O patterns to mitigate the stochastic behaviour of the circuit, i.e., testing only considers the most promising output patterns for each individual input as ground truths." << std::endl;
     }
     else {
-	    std::cout << " This rate DOESN'T cover the sampling and selection of I/O patterns to capture the behaviour of the stochastic circuit, i.e., testing considers any output pattern as is, which may be erroneous." << std::endl;
+	    std::cout << " These metrics DON'T cover the sampling of I/O patterns to mitigate the stochastic behaviour of the circuit, i.e., testing considers any output pattern as is, even if they are erroneous." << std::endl;
     }
+    std::cout << std::endl;
 
 //    return pass;
 	return true;
