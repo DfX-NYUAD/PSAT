@@ -337,9 +337,14 @@ bool solver_t::_verify_solution_sim(rmap_t& keysFound)
     int successful_iter = 0;
     int steps = 1;
     bool key_extracted = false;
-    MAX_VERIF_ITER = 1e03;
     double test_coverage;
     double HD = 0.0;
+
+    // update flags according to parsed .stoch file
+    MAX_VERIF_ITER = simckt.test_patterns;
+    // whether we should apply I/O sampling also for testing is given in a separate flag (IO_sampling_for_test_flag), but has to be assigned to IO_sampling_flag as well, as the
+    // latter is used in the eval() function
+    simckt.IO_sampling_flag = simckt.IO_sampling_for_test_flag;
 
     std::cout << "Verifying key for " << MAX_VERIF_ITER << " test patterns ..." << std::endl;
     if (simckt.IO_sampling_flag) {

@@ -42,6 +42,8 @@ namespace ckt_n {
 	    // values are also updated from the .stoch file
 	    bool IO_sampling_flag = false;
 	    unsigned IO_sampling_iter = 1e03;
+	    bool IO_sampling_for_test_flag = false;
+	    unsigned test_patterns = 1e03;
 
         ckt_t(ast_n::statements_t& stms);           // constructor from bench file.
         ckt_t(nodepair_list_t& pair_map);           // circuit doubling constructor.

@@ -2029,8 +2029,10 @@ namespace ckt_n {
 		return;
 	}
 
-	// drop header; three words
-	// # OUTPUT_SAMPLING_ON OUTPUT_SAMPLING_ITERATIONS
+	// drop header; five words
+	// # OUTPUT_SAMPLING_ON OUTPUT_SAMPLING_ITERATIONS OUTPUT_SAMPLING_FOR_TEST_ON TEST_PATTERNS
+	in >> drop;
+	in >> drop;
 	in >> drop;
 	in >> drop;
 	in >> drop;
@@ -2045,8 +2047,21 @@ namespace ckt_n {
 		IO_sampling_flag = false;
 	}
 
-	// also parse sampling iterations
+	// parse sampling iterations
 	in >> IO_sampling_iter;
+
+	// parse sampling flag for test phase; if true also sample output observations for testing 
+	in >> sampling_flag;
+
+	if (sampling_flag == "1" || sampling_flag == "true") {
+		IO_sampling_for_test_flag = true;
+	}
+	else {
+		IO_sampling_for_test_flag = false;
+	}
+
+	// parse test patterns 
+	in >> test_patterns;
 
 	// drop header; three words
 	// # GATE_NAME ERROR_RATE[%]
