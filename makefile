@@ -15,7 +15,7 @@ ifeq ($(DEBUG), 1)
     OPTFLAGS:=
 else
     DBGFLAGS:=
-    OPTFLAGS:=-O3
+    OPTFLAGS:=-O3 -march=native
 endif
 
 # CUDD vars
