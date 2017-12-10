@@ -3,6 +3,9 @@
 #include "sim.h"
 #include "sld.h"
 
+//JOHANN
+#include <unordered_set>
+
 #include <iterator>
 #include <algorithm>
 #include <boost/lexical_cast.hpp>
@@ -337,6 +340,7 @@ bool solver_t::_verify_solution_sim(rmap_t& keysFound)
 
     // JOHANN
     //
+    std::unordered_set<std::vector<bool>> patterns;
     int successful_iter = 0;
     int steps = 1;
     bool key_extracted = false;
@@ -359,16 +363,33 @@ bool solver_t::_verify_solution_sim(rmap_t& keysFound)
         std::vector<bool> input_values;
         std::vector<bool> output_values;
 
-	    // JOHANN
-	    //
-	    bool pass = true;
+	// JOHANN
+	//
+	bool pass = true;
 
-        for(unsigned i=0; i != cktinput_literals.size(); i++) {
-            bool vi = bool(rand() % 2);
-            assumps.push( vi ? cktinput_literals[i] : ~cktinput_literals[i]);
-            input_values.push_back(vi);
-        }
+	// generate random test pattern
+	do {
+		input_values.clear();
+
+		for(unsigned i=0; i != cktinput_literals.size(); i++) {
+		    bool vi = bool(rand() % 2);
+	//            assumps.push( vi ? cktinput_literals[i] : ~cktinput_literals[i]);
+		    input_values.push_back(vi);
+		}
+	}
+	// if pattern was used before, generate another one
+	while (patterns.count(input_values) == 1);
+
+	// pattern was not used before, so we shall memorize and use it
+	patterns.insert(input_values);
+
+	for(unsigned i=0; i != cktinput_literals.size(); i++) {
+		// modified from original line above
+		assumps.push( input_values[i] ? cktinput_literals[i] : ~cktinput_literals[i]);
+	}
+
         sim.eval(input_values, output_values);
+
         if(verbose) {
             std::cout << "input: " << input_values 
                       << "; output: " << output_values << std::endl;
