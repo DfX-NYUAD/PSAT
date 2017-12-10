@@ -312,7 +312,10 @@ void solver_t::blockKey(rmap_t& keysFound)
     vec_lit_t bc_B(keyinput_literals_A.size());
     for(unsigned i=0; i != keyinput_literals_A.size(); i++) {
         auto &&name_i = ckt.key_inputs[i]->name;
-        assert (keysFound.find(name_i)  != keysFound.end());
+	// JOHANN
+	if (keysFound.find(name_i) == keysFound.end())
+		return;
+//        assert (keysFound.find(name_i)  != keysFound.end());
         auto ki = keysFound[ckt.key_inputs[i]->name];
         bc_A[i] = ki ? ~keyinput_literals_A[i] : keyinput_literals_A[i];
         bc_B[i] = ki ? ~keyinput_literals_B[i] : keyinput_literals_B[i];
@@ -435,7 +438,6 @@ bool solver_t::_verify_solution_sim(rmap_t& keysFound)
     else {
 	    std::cout << " These metrics DON'T cover the sampling of I/O patterns to mitigate the stochastic behaviour of the circuit, i.e., testing considers any output pattern as is, even if they are erroneous." << std::endl;
     }
-    std::cout << std::endl;
 
 //    return pass;
 	return true;

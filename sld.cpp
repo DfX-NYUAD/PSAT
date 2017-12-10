@@ -326,10 +326,16 @@ void solve(ckt_n::ckt_t& ckt, ckt_n::ckt_t& simckt)
     solver = &S;
     S.solve(solver_t::SOLVER_V0, keysFound, false);
     dump_keys(keyNames, keysFound);
+//JOHANN
+std::cout << std::endl;
     for(int i=1; i < more_keys; i++) {
         S.blockKey(keysFound);
-        if(!S.getNewKey(keysFound)) break;
+//JOHANN
+S.getNewKey(keysFound);
+//        if(!S.getNewKey(keysFound)) break;
         dump_keys(keyNames, keysFound);
+//JOHANN
+std::cout << std::endl;
     }
 
     dump_status();
