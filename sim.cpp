@@ -148,7 +148,7 @@ namespace ckt_n {
 			gate->output_bit = gate->inputs[0]->output_bit;
 		}
 		else {
-			std::cout << "ERROR: unsupported function for gate " << gate->name << ": \"" << gate->func << "\"" << std::endl;
+			std::cout << "ERROR: unsupported function for gate " << gate->name << ": \"" << function_name << "\"" << std::endl;
 		}
 
 		// post-process stochastic gates: they may experience flipping of their outputs depending on their error rate

@@ -2155,7 +2155,6 @@ namespace ckt_n {
 					}
 					else {
 						p_fct.function = fct::UNDEF;
-						p_fct.name = "UNDEF";
 					}
 
 					gate->polymorphic_fcts.push_back(p_fct);
