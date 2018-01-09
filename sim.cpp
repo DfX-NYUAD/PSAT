@@ -91,28 +91,60 @@ namespace ckt_n {
 	//
 	for (auto* gate : ckt.gates_sorted) {
 
-		if (gate->function == fct::AND) {
+		fct function;
+		std::string function_name;
+
+		// for regular (not polymorphic) gates, the function is fixed (but the function can stochastically fail, see below)
+		if (gate->polymorphic_fcts.empty()) {
+			function = gate->function;
+			function_name = gate->func;
+		}
+
+		// for polymorphic gates, the function is flexible; here for simplicity we select randomly from one of the available functions, but according to the probability of that function
+		else {
+			function = gate->function;
+			function_name = gate->func;
+
+			// random double between 0.0 and 100.0, excluding 100.0 itself
+			double r = (100.0 * (static_cast<double>(rand()) / RAND_MAX));
+
+			// sum up the probabilities of all polymorphic functions; map the random value into the resulting 0--100% range and pick the one function which is in the
+			// respective part of the range
+			double range = 0.0;
+			for (poly_fct const& fct : gate->polymorphic_fcts) {
+
+				range += fct.probability;
+
+				if (r < range) {
+					function = fct.function;
+					function_name = fct.name;
+					break;
+				}
+			}
+		}
+
+		if (function == fct::AND) {
 			gate->output_bit = gate->inputs[0]->output_bit && gate->inputs[1]->output_bit;
 		}
-		else if (gate->function == fct::NAND) {
+		else if (function == fct::NAND) {
 			gate->output_bit = !(gate->inputs[0]->output_bit && gate->inputs[1]->output_bit);
 		}
-		else if (gate->function == fct::OR) {
+		else if (function == fct::OR) {
 			gate->output_bit = gate->inputs[0]->output_bit || gate->inputs[1]->output_bit;
 		}
-		else if (gate->function == fct::NOR) {
+		else if (function == fct::NOR) {
 			gate->output_bit = !(gate->inputs[0]->output_bit || gate->inputs[1]->output_bit);
 		}
-		else if (gate->function == fct::XOR) {
+		else if (function == fct::XOR) {
 			gate->output_bit = gate->inputs[0]->output_bit ^ gate->inputs[1]->output_bit;
 		}
-		else if (gate->function == fct::XNOR) {
+		else if (function == fct::XNOR) {
 			gate->output_bit = !(gate->inputs[0]->output_bit ^ gate->inputs[1]->output_bit);
 		}
-		else if (gate->function == fct::INV) {
+		else if (function == fct::INV) {
 			gate->output_bit = !gate->inputs[0]->output_bit;
 		}
-		else if (gate->function == fct::BUF) {
+		else if (function == fct::BUF) {
 			gate->output_bit = gate->inputs[0]->output_bit;
 		}
 		else {
@@ -135,7 +167,7 @@ namespace ckt_n {
 
 		if (ckt_n::DBG_VERBOSE) {
 			std::cout << "Gate " << gate->name << std::endl;
-			std::cout << " func: " << gate->func << std::endl;
+			std::cout << " function: " << function_name << std::endl;
 			std::cout << " inputs[0]: " << gate->inputs[0]->output_bit << std::endl;
 			if (gate->inputs.size() > 1) {
 				std::cout << " inputs[1]: " << gate->inputs[1]->output_bit << std::endl;
