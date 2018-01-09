@@ -19,7 +19,13 @@ namespace ckt_n {
     typedef std::set<node_t*> nodeset_t;
 
 	// JOHANN
-	enum class FUNC : unsigned {UNDEF, AND, NAND, OR, NOR, XOR, XNOR, INV, BUF};
+	enum class fct : unsigned {UNDEF, AND, NAND, OR, NOR, XOR, XNOR, INV, BUF};
+
+	struct poly_fct {
+		fct function;
+		std::string name;
+		double probability;
+	};
 
     struct node_t {
 
@@ -43,7 +49,8 @@ namespace ckt_n {
 	// JOHANN
 	bool output_bit;
 	double error_rate = 0.0;
-	FUNC func_enum = FUNC::UNDEF;
+	fct function = fct::UNDEF;
+	std::vector<poly_fct> polymorphic_fcts;
 
         unsigned num_inputs() const { return inputs.size(); }
         unsigned num_fanouts() const { return fanouts.size(); }

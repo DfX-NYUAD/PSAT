@@ -2017,6 +2017,8 @@ namespace ckt_n {
 	std::string sampling_flag;
 	std::string gate_name;
 	std::string error_rate;
+	std::string polymorphic_gate__function;
+	std::string polymorphic_gate__probability;
 	unsigned stochastic_gates = 0;
 
 	in.open(file.c_str());
@@ -2063,13 +2065,12 @@ namespace ckt_n {
 	// parse test patterns 
 	in >> test_patterns;
 
-	// drop header; three words
-	// # GATE_NAME ERROR_RATE[%]
-	in >> drop;
-	in >> drop;
-	in >> drop;
+	// drop header; until keyword NEXT_GATE
+	do {
+		in >> drop;
+	} while (drop != "NEXT_GATE");
 
-	// parse stochastic gates and their error rates
+	// parse stochastic gates
 	//
 	while (!in.eof()) {
 		in >> gate_name;
@@ -2090,12 +2091,84 @@ namespace ckt_n {
 
 		if (gate == nullptr) {
 			std::cout << "Parsing of " << file << "; no such gate exists in the circuit: " << gate_name << std::endl;
+
+			// drop list of polymorphic functions, if there is one, for gate not found
+			do {
+				in >> drop;
+
+				if (in.eof()) {
+					break;
+				}
+			} while (drop != "NEXT_GATE");
 		}
 		else {
 			gate->error_rate = atof(error_rate.c_str());
 
 			if (ckt_t::DBG) {
 				std::cout << "Parsing of " << file << "; gate " << gate_name << " annotated with error rate of " << gate->error_rate << "%" << std::endl;
+			}
+
+			// next word is keyword, either NEXT_GATE or POLYMORPHIC_GATE
+			in >> drop;
+
+			if (drop == "POLYMORPHIC_GATE") {
+
+				// parse list of polymorphic functions
+				do {
+					in >> polymorphic_gate__function;
+					if (in.eof() || polymorphic_gate__function == "NEXT_GATE") {
+						break;
+					}
+					in >> polymorphic_gate__probability;
+					if (in.eof()) {
+						break;
+					}
+
+					poly_fct p_fct;
+
+					p_fct.probability = atof(polymorphic_gate__probability.c_str());
+					p_fct.name = polymorphic_gate__function;
+
+					if (p_fct.name == "AND") {
+						p_fct.function = fct::AND;
+					}
+					else if (p_fct.name == "NAND") {
+						p_fct.function = fct::NAND;
+					}
+					else if (p_fct.name == "OR") {
+						p_fct.function = fct::OR;
+					}
+					else if (p_fct.name == "NOR") {
+						p_fct.function = fct::NOR;
+					}
+					else if (p_fct.name == "XOR") {
+						p_fct.function = fct::XOR;
+					}
+					else if (p_fct.name == "XNOR") {
+						p_fct.function = fct::XNOR;
+					}
+					else if (p_fct.name == "INV") {
+						p_fct.function = fct::INV;
+					}
+					else if (p_fct.name == "BUF") {
+						p_fct.function = fct::BUF;
+					}
+					else {
+						p_fct.function = fct::UNDEF;
+						p_fct.name = "UNDEF";
+					}
+
+					gate->polymorphic_fcts.push_back(p_fct);
+
+					if (ckt_t::DBG) {
+						std::cout << "Parsing of " << file << "; gate " << gate_name << " has polymorphic function \"" << p_fct.name << "\"; probability for that function is " << p_fct.probability << "%" << std::endl;
+					}
+
+				} while (true);
+
+				if (ckt_t::DBG) {
+					std::cout << "Parsing of " << file << "; gate " << gate_name << " has in total " << gate->polymorphic_fcts.size() << " polymorphic functions" << std::endl;
+				}
 			}
 		}
 	}
