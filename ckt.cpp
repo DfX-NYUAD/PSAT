@@ -2111,10 +2111,13 @@ namespace ckt_n {
 			// next word is keyword, either NEXT_GATE or POLYMORPHIC_GATE
 			in >> drop;
 
-			if (drop == "POLYMORPHIC_GATE") {
+			// don't check for POLYMORPHIC_GATE, but rather check only that it's not NEXT_GATE; this way, any typo in POLYMORPHIC_GATE is not an issue
+			if (drop != "NEXT_GATE") {
 
 				// parse list of polymorphic functions
 				do {
+					// polymorphic functions are always in pairs; if NEXT_GATE occurs, the list of functions ended already
+					//
 					in >> polymorphic_gate__function;
 					if (in.eof() || polymorphic_gate__function == "NEXT_GATE") {
 						break;
