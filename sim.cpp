@@ -129,6 +129,7 @@ namespace ckt_n {
 				if (gate->inputs.size() == 1) {
 					std::cout << "ERROR: gate " << gate->name << " cannot support the probabilistic function ";
 					std::cout << function_name << " as the underlying gate was original a \"" << gate->func << "\" gate" << std::endl;
+					exit(1);
 				}
 			}
 		}
@@ -159,6 +160,7 @@ namespace ckt_n {
 		}
 		else {
 			std::cout << "ERROR: unsupported function for gate " << gate->name << ": \"" << function_name << "\"" << std::endl;
+			exit(1);
 		}
 
 		// post-process stochastic gates: they may experience flipping of their outputs depending on their error rate
