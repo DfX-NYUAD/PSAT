@@ -121,6 +121,16 @@ namespace ckt_n {
 					break;
 				}
 			}
+
+			// sanity check: for probabilistic functions with two inputs (any other than INV/BUF), make sure that the actual underlying gate supports this, i.e., is not
+			// an INV or BUF
+			//
+			if (!(function == fct::INV || function == fct::BUF)) {
+				if (gate->inputs.size() == 1) {
+					std::cout << "ERROR: gate " << gate->name << " cannot support the probabilistic function ";
+					std::cout << function_name << " as the underlying gate was original a \"" << gate->func << "\" gate" << std::endl;
+				}
+			}
 		}
 
 		if (function == fct::AND) {
