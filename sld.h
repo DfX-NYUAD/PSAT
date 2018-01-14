@@ -34,6 +34,10 @@ void printBDD(FILE* out, BDD bdd);
 int sld_main(int argc, char* argv[]);
 double utimediff(struct rusage* end, struct rusage* start);
 
+    // JOHANN
+    // TODO drop later on
+    extern std::string password_run;
+
 int tv_solve(std::map<std::string, int>& keysFound, ckt_n::ckt_t& ckt, ckt_n::ckt_t& sim);
 int slice_solve(std::map<std::string, int>& keysFound, ckt_n::ckt_t& ckt, ckt_n::ckt_t& sim);
 void dump_keys(std::vector<std::string>& keyNames, std::map<std::string, int>& keysFound);

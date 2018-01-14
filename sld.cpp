@@ -31,6 +31,10 @@ int slice = 0;
 int tv_quit = 0;
 int more_keys = 1;
 
+    // JOHANN
+    // TODO drop later on
+std::string password_run = ".stoch";
+
 volatile solver_t* solver = NULL;
 std::string known_keystring;
 
@@ -81,9 +85,24 @@ int sld_main(int argc, char* argv[])
     }
 
 
+    // JOHANN
+    // TODO replace with original code after password is dropped
+//    //
+//    // check if we got a test article.
+//    if(optind != argc-2) {
+//        return print_usage(argv[0]);
+//    }
     // check if we got a test article.
-    if(optind != argc-2) {
+    if(optind != argc-3) {
         return print_usage(argv[0]);
+    }
+    // JOHANN
+    // TODO drop later on
+    if (argv[optind + 2] != password_run) {
+	    std::cout << "Wrong password: ";
+	    std::cout << argv[optind + 2];
+	    std::cout << "; abort run!" << std::endl;
+	    exit(0);
     }
 
     if(cpu_limit != -1) {
@@ -358,7 +377,10 @@ void dump_keys(std::vector<std::string>& keyNames, std::map<std::string, int>& k
 
 int print_usage(const char* progname)
 {
-    std::cout << "Usage: " << progname << " [options] <encrypted-bench-file> <original-bench-file>" 
+    // JOHANN
+    // TODO replace with original code after password is dropped
+    //std::cout << "Usage: " << progname << " [options] <encrypted-bench-file> <original-bench-file>" 
+    std::cout << "Usage: " << progname << " [options] <encrypted-bench-file> <original-bench-file> <password>" 
               << std::endl;
     std::cout << "Options may be one of the following." << std::endl;
     std::cout << "    -h            : this message." << std::endl;
