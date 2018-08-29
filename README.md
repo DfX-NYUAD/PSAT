@@ -11,7 +11,7 @@ for more details.
 To invoke the attack use the *sld* command in the following manner:
 
 	cd bin
-	./sld  ../benchmarks/stoch/c432_RTL_rnd32.bench ../benchmarks/original/c432_RTL.bench PASSWORD
+	./sld  ../benchmarks/PSAT/probabilistic/c432_RTL_rnd32.bench ../benchmarks/ORIGINAL/c432_RTL.bench PASSWORD
 
 The password is currently only known to the reviewers.
 
@@ -41,7 +41,7 @@ The output when this command is run is something like this:
 The penultimate output line is the inferred key value.
 
 
-We enable the probabilistic computation internally, so the user has to provide a correspong file (*.stoch*, residing in the same folder as the locked/camouflaged netlist). Examples can be found in the directory
+We enable the probabilistic computation internally, so the user has to provide a corresponding file (*.stoch*, residing in the same folder as the locked/camouflaged netlist). Examples can be found in the directory
 	*benchmarks/stoch*.
 
 A short example is also given below:
@@ -53,14 +53,18 @@ A short example is also given below:
 	NEXT_GATE
 	n_72 5
 	NEXT_GATE
-	n_116 5 NAND 50 NOR 50
+	n_116 5 POLYMORPHIC_GATE NAND 50 NOR 50
+	NEXT_GATE
+	n_118 0 POLYMORPHIC_GATE NAND 50 NOR 50
 
-This means the gates *n\_72*, *n\_116* each have a probability of correctness (error) of 95% (5%). Furthermore, the gate *n\_116* is polymorphic and can act as NAND 50% of the time and as NOR 50% of the time. Note that definitions for probabilistic and/or polymorphic behaviour can be set up indepedently, but their effects will combine. In other words, here *n\_116* behaves as NAND/NOR/AND/OR with 47.5/47.5/2.5/2.5% chances, respectively.
+This means the gates *n\_72*, *n\_116* each have a probability of correctness (or error) of 95% (or 5%). Furthermore, the gates *n\_116* and *n\_118* are polymorphic and can act as NAND 50% of the time and as NOR 50% of the time.
+
+Note that definitions for probabilistic and polymorphic behaviour can be set up independently, but their effects will combine. In other words, here *n\_116* behaves as NAND/NOR/AND/OR with 47.5/47.5/2.5/2.5% chances, respectively. Also note that polymorphic behavior, for the SAT solver, imposes just another form of errors.
 
 
 To execute the conventional/original SAT attack, simply change the first flag related to *OUTPUT_SAMPLING* from *true* to *false* in the header of the *.stoch* file
 
-The output for such probablistic and/or polymorphic circuits is probably something like this, indicating the attack failure:
+Depending on the error rates, the attack may fail:
 
 	Stochastic gates count: 20
 	Sampling of output observations for stochastic circuits: off
@@ -73,3 +77,5 @@ The output for such probablistic and/or polymorphic circuits is probably somethi
 	key=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 	iteration=8; backbones_count=0; cube_count=10700; cpu_time=0.024; maxrss=7.5625
+
+In those cases, the attack can be tried several times, to gauge the randomized error and attack success for multiple runs.
