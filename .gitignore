@@ -1,5 +1,8 @@
 *.o
 *.d
+*.cc
+*.hh
+*.output
 lcmp
 sle
 sld
