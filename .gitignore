@@ -11,3 +11,7 @@ sle
 sld
 source/lingeling
 bin/
+*backup*
+*.log
+*.back
+*.keys
