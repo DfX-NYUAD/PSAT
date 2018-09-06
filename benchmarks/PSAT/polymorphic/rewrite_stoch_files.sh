@@ -14,6 +14,10 @@ STOCH_FILE=$1
 ORIG_BENCH=$2
 PROB=$3
 
+## pre-calculate probabilities for remaining functions
+PROB_5_REM=`bc <<< "scale = 2; ((100 - $PROB) / 5)"`
+PROB_1_REM=`bc <<< "scale = 2; (100 - $PROB)"`
+
 ## backup stoch file
 cp $STOCH_FILE $STOCH_FILE"_backup_at_"`date +%s`
 
@@ -32,11 +36,7 @@ do
 	echo "Polymorphic gate name: $poly_gate"
 	#echo "	Gate error rate: $poly_gate_error"
 	echo "	Related gate definition in $ORIG_BENCH: $orig_gate"
-	echo "	Old line/definition in $STOCH_FILE: `cat $STOCH_FILE | grep $poly_gate`"
-
-	## pre-calculate probabilities for remaining functions
-	PROB_5_REM=`bc <<< "scale = 2; ((100 - $PROB) / 5)"`
-	PROB_1_REM=`bc <<< "scale = 2; (100 - $PROB)"`
+	echo "	Old line/definition in $STOCH_FILE: `cat $STOCH_FILE | grep -w $poly_gate`"
 
 	## then, depending on the original gate, rewrite the related polymorphic gate
 	##
@@ -44,40 +44,40 @@ do
 	### checked for first
 	if [[ ($orig_gate = *NAND*) || ($orig_gate = *nand*) ]]; then
 
-		sed -i "s/^$poly_gate.*/$poly_gate $poly_gate_error POLYMORPHIC_GATE NAND $PROB AND $PROB_5_REM NOR $PROB_5_REM OR $PROB_5_REM XOR $PROB_5_REM XNOR $PROB_5_REM/g" $STOCH_FILE
+		sed -i "s/^\b$poly_gate\b.*/$poly_gate $poly_gate_error POLYMORPHIC_GATE NAND $PROB AND $PROB_5_REM NOR $PROB_5_REM OR $PROB_5_REM XOR $PROB_5_REM XNOR $PROB_5_REM/g" $STOCH_FILE
 
 	elif [[ ($orig_gate = *AND*) || ($orig_gate = *and*) ]]; then
 
-		sed -i "s/^$poly_gate.*/$poly_gate $poly_gate_error POLYMORPHIC_GATE NAND $PROB_5_REM AND $PROB NOR $PROB_5_REM OR $PROB_5_REM XOR $PROB_5_REM XNOR $PROB_5_REM/g" $STOCH_FILE
+		sed -i "s/^\b$poly_gate\b.*/$poly_gate $poly_gate_error POLYMORPHIC_GATE NAND $PROB_5_REM AND $PROB NOR $PROB_5_REM OR $PROB_5_REM XOR $PROB_5_REM XNOR $PROB_5_REM/g" $STOCH_FILE
 
 	elif [[ ($orig_gate = *XNOR*) || ($orig_gate = *xnor*) ]]; then
 
-		sed -i "s/^$poly_gate.*/$poly_gate $poly_gate_error POLYMORPHIC_GATE NAND $PROB_5_REM AND $PROB_5_REM NOR $PROB_5_REM OR $PROB_5_REM XOR $PROB_5_REM XNOR $PROB/g" $STOCH_FILE
+		sed -i "s/^\b$poly_gate\b.*/$poly_gate $poly_gate_error POLYMORPHIC_GATE NAND $PROB_5_REM AND $PROB_5_REM NOR $PROB_5_REM OR $PROB_5_REM XOR $PROB_5_REM XNOR $PROB/g" $STOCH_FILE
 
 	elif [[ ($orig_gate = *NOR*) || ($orig_gate = *nor*) ]]; then
 
-		sed -i "s/^$poly_gate.*/$poly_gate $poly_gate_error POLYMORPHIC_GATE NAND $PROB_5_REM AND $PROB_5_REM NOR $PROB OR $PROB_5_REM XOR $PROB_5_REM XNOR $PROB_5_REM/g" $STOCH_FILE
+		sed -i "s/^\b$poly_gate\b.*/$poly_gate $poly_gate_error POLYMORPHIC_GATE NAND $PROB_5_REM AND $PROB_5_REM NOR $PROB OR $PROB_5_REM XOR $PROB_5_REM XNOR $PROB_5_REM/g" $STOCH_FILE
 
 	elif [[ ($orig_gate = *XOR*) || ($orig_gate = *xor*) ]]; then
 
-		sed -i "s/^$poly_gate.*/$poly_gate $poly_gate_error POLYMORPHIC_GATE NAND $PROB_5_REM AND $PROB_5_REM NOR $PROB_5_REM OR $PROB_5_REM XOR $PROB XNOR $PROB_5_REM/g" $STOCH_FILE
+		sed -i "s/^\b$poly_gate\b.*/$poly_gate $poly_gate_error POLYMORPHIC_GATE NAND $PROB_5_REM AND $PROB_5_REM NOR $PROB_5_REM OR $PROB_5_REM XOR $PROB XNOR $PROB_5_REM/g" $STOCH_FILE
 
 	elif [[ ($orig_gate = *OR*) || ($orig_gate = *or*) ]]; then
 
-		sed -i "s/^$poly_gate.*/$poly_gate $poly_gate_error POLYMORPHIC_GATE NAND $PROB_5_REM AND $PROB_5_REM NOR $PROB_5_REM OR $PROB XOR $PROB_5_REM XNOR $PROB_5_REM/g" $STOCH_FILE
+		sed -i "s/^\b$poly_gate\b.*/$poly_gate $poly_gate_error POLYMORPHIC_GATE NAND $PROB_5_REM AND $PROB_5_REM NOR $PROB_5_REM OR $PROB XOR $PROB_5_REM XNOR $PROB_5_REM/g" $STOCH_FILE
 
 	elif [[ ($orig_gate = *NOT*) || ($orig_gate = *not*) ]]; then
 
-		sed -i "s/^$poly_gate.*/$poly_gate $poly_gate_error POLYMORPHIC_GATE INV $PROB BUF $PROB_1_REM/g" $STOCH_FILE
+		sed -i "s/^\b$poly_gate\b.*/$poly_gate $poly_gate_error POLYMORPHIC_GATE INV $PROB BUF $PROB_1_REM/g" $STOCH_FILE
 
 	elif [[ ($orig_gate = *BUF*) || ($orig_gate = *buf*) ]]; then
 
-		sed -i "s/^$poly_gate.*/$poly_gate $poly_gate_error POLYMORPHIC_GATE INV $PROB_1_REM BUF $PROB/g" $STOCH_FILE
+		sed -i "s/^\b$poly_gate\b.*/$poly_gate $poly_gate_error POLYMORPHIC_GATE INV $PROB_1_REM BUF $PROB/g" $STOCH_FILE
 	else
 		echo ""
 		echo "Error -- function for $poly_gate cannot be parsed from $orig_gate !"
 		exit
 	fi
 
-	echo "	New line/definition in $STOCH_FILE: `cat $STOCH_FILE | grep $poly_gate`"
+	echo "	New line/definition in $STOCH_FILE: `cat $STOCH_FILE | grep -w $poly_gate`"
 done
