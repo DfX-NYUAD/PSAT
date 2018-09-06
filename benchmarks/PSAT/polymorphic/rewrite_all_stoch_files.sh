@@ -12,7 +12,7 @@ do
 	bench_file=${file%.*}
 	bench_file_no_path=${bench_file##*/}
 
-	echo "Working on $bench_file_no_path ..."
+	echo "Working on $bench_file ..."
 
 	./rewrite_stoch_files.sh $file ../../ORIGINAL/$bench_file_no_path $1
 

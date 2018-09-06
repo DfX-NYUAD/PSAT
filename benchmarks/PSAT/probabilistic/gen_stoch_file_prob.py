@@ -36,7 +36,9 @@ def parse(input_file, gates_count, error_rate):
     f.write(text)
     for i in range(gates_count):
         f.write(next_gate)
-        f.write('{} {}\n'.format(random.choice(gates), error_rate))
+        random_gate = random.choice(gates)
+        gates.remove(random_gate)
+        f.write('{} {}\n'.format(random_gate, error_rate))
     f.close()
 
 

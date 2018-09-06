@@ -23,8 +23,8 @@ echo ""
 ## for all polymorphic gates in the stoch file ...
 for poly_gate in `cat $STOCH_FILE | grep -v "GATE_NAME" | grep "POLYMORPHIC_GATE" | cut -f 1 -d " "`
 do
-	## parse the related gate in the original bench file
-	orig_gate=`ack-grep "$poly_gate = " $ORIG_BENCH`
+	## parse the related gate's line in the original bench file
+	orig_gate=`awk '{if($1=="'$poly_gate'") print $0;}' $ORIG_BENCH`
 
 	## also extract the error rate for the polymorphic gate (from the stoch file)
 	poly_gate_error=`awk '{if($1=="'$poly_gate'") print $2;}' $STOCH_FILE`
@@ -42,37 +42,41 @@ do
 	##
 	### *STRING* matches substrings -- to avoid mistaking AND for NAND, e.g., those longer and more precise substrings have to be
 	### checked for first
-	if [[ $orig_gate = *NAND* ]]; then
+	if [[ ($orig_gate = *NAND*) || ($orig_gate = *nand*) ]]; then
 
 		sed -i "s/^$poly_gate.*/$poly_gate $poly_gate_error POLYMORPHIC_GATE NAND $PROB AND $PROB_5_REM NOR $PROB_5_REM OR $PROB_5_REM XOR $PROB_5_REM XNOR $PROB_5_REM/g" $STOCH_FILE
 
-	elif [[ $orig_gate = *AND* ]]; then
+	elif [[ ($orig_gate = *AND*) || ($orig_gate = *and*) ]]; then
 
 		sed -i "s/^$poly_gate.*/$poly_gate $poly_gate_error POLYMORPHIC_GATE NAND $PROB_5_REM AND $PROB NOR $PROB_5_REM OR $PROB_5_REM XOR $PROB_5_REM XNOR $PROB_5_REM/g" $STOCH_FILE
 
-	elif [[ $orig_gate = *NOR* ]]; then
-
-		sed -i "s/^$poly_gate.*/$poly_gate $poly_gate_error POLYMORPHIC_GATE NAND $PROB_5_REM AND $PROB_5_REM NOR $PROB OR $PROB_5_REM XOR $PROB_5_REM XNOR $PROB_5_REM/g" $STOCH_FILE
-
-	elif [[ $orig_gate = *OR* ]]; then
-
-		sed -i "s/^$poly_gate.*/$poly_gate $poly_gate_error POLYMORPHIC_GATE NAND $PROB_5_REM AND $PROB_5_REM NOR $PROB_5_REM OR $PROB XOR $PROB_5_REM XNOR $PROB_5_REM/g" $STOCH_FILE
-
-	elif [[ $orig_gate = *XNOR* ]]; then
+	elif [[ ($orig_gate = *XNOR*) || ($orig_gate = *xnor*) ]]; then
 
 		sed -i "s/^$poly_gate.*/$poly_gate $poly_gate_error POLYMORPHIC_GATE NAND $PROB_5_REM AND $PROB_5_REM NOR $PROB_5_REM OR $PROB_5_REM XOR $PROB_5_REM XNOR $PROB/g" $STOCH_FILE
 
-	elif [[ $orig_gate = *XOR* ]]; then
+	elif [[ ($orig_gate = *NOR*) || ($orig_gate = *nor*) ]]; then
+
+		sed -i "s/^$poly_gate.*/$poly_gate $poly_gate_error POLYMORPHIC_GATE NAND $PROB_5_REM AND $PROB_5_REM NOR $PROB OR $PROB_5_REM XOR $PROB_5_REM XNOR $PROB_5_REM/g" $STOCH_FILE
+
+	elif [[ ($orig_gate = *XOR*) || ($orig_gate = *xor*) ]]; then
 
 		sed -i "s/^$poly_gate.*/$poly_gate $poly_gate_error POLYMORPHIC_GATE NAND $PROB_5_REM AND $PROB_5_REM NOR $PROB_5_REM OR $PROB_5_REM XOR $PROB XNOR $PROB_5_REM/g" $STOCH_FILE
 
-	elif [[ $orig_gate = *NOT* ]]; then
+	elif [[ ($orig_gate = *OR*) || ($orig_gate = *or*) ]]; then
+
+		sed -i "s/^$poly_gate.*/$poly_gate $poly_gate_error POLYMORPHIC_GATE NAND $PROB_5_REM AND $PROB_5_REM NOR $PROB_5_REM OR $PROB XOR $PROB_5_REM XNOR $PROB_5_REM/g" $STOCH_FILE
+
+	elif [[ ($orig_gate = *NOT*) || ($orig_gate = *not*) ]]; then
 
 		sed -i "s/^$poly_gate.*/$poly_gate $poly_gate_error POLYMORPHIC_GATE INV $PROB BUF $PROB_1_REM/g" $STOCH_FILE
 
-	elif [[ $orig_gate = *BUF* ]]; then
+	elif [[ ($orig_gate = *BUF*) || ($orig_gate = *buf*) ]]; then
 
 		sed -i "s/^$poly_gate.*/$poly_gate $poly_gate_error POLYMORPHIC_GATE INV $PROB_1_REM BUF $PROB/g" $STOCH_FILE
+	else
+		echo ""
+		echo "Error -- function for $poly_gate cannot be parsed from $orig_gate !"
+		exit
 	fi
 
 	echo "	New line/definition in $STOCH_FILE: `cat $STOCH_FILE | grep $poly_gate`"
