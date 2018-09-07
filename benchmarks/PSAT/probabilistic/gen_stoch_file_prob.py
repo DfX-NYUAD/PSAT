@@ -29,7 +29,7 @@ def parse(input_file, gates_count, error_rate):
     print '--' * 100
     import random
 
-    text = """# OUTPUT_SAMPLING_ON OUTPUT_SAMPLING_ITERATIONS OUTPUT_SAMPLING_FOR_TEST_ON TEST_PATTERNS\ntrue 1000 false 10000\n# GATE_NAME ERROR_RATE[%]\n"""
+    text = """# OUTPUT_SAMPLING_ON OUTPUT_SAMPLING_ITERATIONS OUTPUT_SAMPLING_FOR_TEST_ON TEST_PATTERNS\ntrue 1000 false 10000\n# GATE_NAME ERROR_RATE (%)\n"""
     next_gate = "NEXT_GATE\n"
     output_file = 'out.txt'
     f = open(output_file, 'w')
