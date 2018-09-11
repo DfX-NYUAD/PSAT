@@ -29,7 +29,7 @@ do
 	lines_before=`wc -l $log_file | awk '{print $1}'`
 
 	## run attack, grep only those lines with successfully generated keys
-	echo "Run $r ..."
+	echo "Run $r on bench $bench_file ..."
 	../../bin/sld $bench_file ../ORIGINAL/$bench_file_no_path .stoch | grep -B 4 -E "key=0|key=1" | tee -a $log_file
 	echo "Done"
 
