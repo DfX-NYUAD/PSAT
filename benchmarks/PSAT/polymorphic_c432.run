@@ -1,0 +1,4 @@
+for i in {1..10}
+do
+	./run.sh polymorphic/c432/$i%/c432_RTL_rnd32.bench 10000 "c432_polymorphic_66.67_"$i".log"
+done

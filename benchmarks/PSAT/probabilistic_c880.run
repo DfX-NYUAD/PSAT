@@ -1,0 +1,7 @@
+for i in 10 20 50
+do
+	for c in 90 95 99
+	do
+		./run.sh probabilistic/c880/$i%/correctness_$c/c880_RTL_rnd32.bench 10000 "c880_probabilistic_"$i"_"$c".log"
+	done
+done
