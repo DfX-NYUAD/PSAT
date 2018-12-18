@@ -349,6 +349,10 @@ bool solver_t::_verify_solution_sim(rmap_t& keysFound)
 
     // update flags according to parsed .stoch file
     MAX_VERIF_ITER = simckt.test_patterns;
+    // also consider how many patterns can be investigated at all, considering the number of PIs
+    MAX_VERIF_ITER = min(MAX_VERIF_ITER, (int) pow(2, cktinput_literals.size()));
+
+
     // whether we should apply I/O sampling also for testing is given in a separate flag (IO_sampling_for_test_flag), but has to be assigned to IO_sampling_flag as well, as the
     // latter is used in the eval() function
     simckt.IO_sampling_flag = simckt.IO_sampling_for_test_flag;
