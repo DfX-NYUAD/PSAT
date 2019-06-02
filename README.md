@@ -3,8 +3,8 @@
 This is a probabilistic SAT attack tool developed on top of the SAT attack code originally developed by 
 Pramod Subramanyani (the latter is available at https://bitbucket.org/spramod/host15-logic-encryption).
 
-We provide the binary of the attack located in */bin* and associated benchmarks in */benchmarks*. The complete attack code shall
-be made available as open source to the research community in the near future. This binary has been tested on 64-bit Ubuntu 16.04 LTS. To run the (dynamically linked) binary, default C++ libraries are required as well as OpenMP. Also run
+We provide the binary of the attack located in */bin* and associated benchmarks in */benchmarks*. The complete source code is also available.
+This binary has been tested on 64-bit Ubuntu 16.04 LTS. To run the binary, default C++ libraries are required as well as OpenMP. Also run
 	*ldd bin/sld*
 for more details.
 
@@ -13,7 +13,7 @@ To invoke the attack use the *sld* command in the following manner:
 	cd bin
 	./sld  ../benchmarks/PSAT/probabilistic/c432_RTL_rnd32.bench ../benchmarks/ORIGINAL/c432_RTL.bench PASSWORD
 
-The password is currently only known to the reviewers.
+The password is ".stoch"
 
 The output when this command is run is something like this:
 
