@@ -11,9 +11,7 @@ for more details.
 To invoke the attack use the *sld* command in the following manner:
 
 	cd bin
-	./sld  ../benchmarks/PSAT/probabilistic/c432_RTL_rnd32.bench ../benchmarks/ORIGINAL/c432_RTL.bench PASSWORD
-
-The password is ".stoch"
+	./sld  ../benchmarks/PSAT/probabilistic/c432/10\%/correctness_99/c432_RTL_rnd32.bench ../benchmarks/ORIGINAL/c432_RTL.bench
 
 The output when this command is run is something like this:
 
