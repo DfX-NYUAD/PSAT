@@ -118,7 +118,7 @@ private:
     ckt_n::ckt_eval_t sim;
     ckt_n::dblckt_t dbl;
 
-    int MAX_VERIF_ITER;
+    unsigned long MAX_VERIF_ITER;
     sat_n::Solver S;              // "doubled-ckt" solver.
     AllSAT::ClauseList cl;        // solver with the initial list of clauses.
 

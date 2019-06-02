@@ -349,8 +349,13 @@ bool solver_t::_verify_solution_sim(rmap_t& keysFound)
 
     // update flags according to parsed .stoch file
     MAX_VERIF_ITER = simckt.test_patterns;
+
     // also consider how many patterns can be investigated at all, considering the number of PIs
-    MAX_VERIF_ITER = min(MAX_VERIF_ITER, (int) pow(2, cktinput_literals.size()));
+    unsigned long possible_patterns = std::pow(2, cktinput_literals.size());
+    // however, ignore overflows (would be zero for unsigned)
+    if (possible_patterns > 0) {
+	    MAX_VERIF_ITER = std::min(MAX_VERIF_ITER, possible_patterns);
+    }
 
 
     // whether we should apply I/O sampling also for testing is given in a separate flag (IO_sampling_for_test_flag), but has to be assigned to IO_sampling_flag as well, as the
@@ -358,6 +363,10 @@ bool solver_t::_verify_solution_sim(rmap_t& keysFound)
     simckt.IO_sampling_flag = simckt.IO_sampling_for_test_flag;
 
     std::cout << "Verifying key for " << MAX_VERIF_ITER << " test patterns ..." << std::endl;
+    if (possible_patterns > 0) {
+	    std::cout << " (Max possible patterns: " << possible_patterns << ")" << std::endl;
+    }
+
     if (simckt.IO_sampling_flag) {
 	    std::cout << " Sampling and selection of output patterns is on" << std::endl;
     }
