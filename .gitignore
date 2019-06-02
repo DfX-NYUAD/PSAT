@@ -1,7 +1,5 @@
 *.o
 *.d
-*.cc
-*.hh
 *.output
 *.a
 *cache*
