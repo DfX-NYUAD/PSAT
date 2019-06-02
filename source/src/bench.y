@@ -5,8 +5,8 @@
 #include <vector>
 #include "ast.h"
 
-extern int yylex(void);
-extern int yylineno;
+extern "C" int yylex(void);
+extern "C" int yylineno;
 
 void yyerror(const char *str)
 {

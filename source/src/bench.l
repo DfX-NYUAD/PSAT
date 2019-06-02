@@ -6,6 +6,7 @@
 #include "ast.h"
 #include "bench.tab.hh"
 
+#define YY_DECL extern "C" int yylex()
 %}
 
 %s IN_COMMENT
