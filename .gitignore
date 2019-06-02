@@ -1,3 +1,16 @@
+*.o
+*.d
+*.cc
+*.hh
+*.output
+*.a
+*cache*
+*build*
+lcmp
+sle
+sld
+source/lingeling
+bin/
 *backup*
 *.log
 *.back

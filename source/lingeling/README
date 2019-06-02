@@ -1,0 +1,13 @@
+Lingeling SAT Solver Version azf-9203284-140522
+
+./configure.sh && make
+
+This software is copyright 2010-2014, Armin Biere, JKU, Linz.  
+
+This is only a restricted release of this software.
+
+See 'COPYING' for more details on the permission to use this software.
+
+All rights are reserved.  No warranty is implied.
+
+Armin Biere

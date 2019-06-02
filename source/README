@@ -1,0 +1,34 @@
+
+
+You need to build the dependencies: CUDD, MiniSAT,
+CryptoMinisat and lingeling first. 
+C++ Boost libraries are also required.
+
+Follow the instructions provided below for individual tools. 
+And then use the makefile in the source
+directory.
+
+You will also need to install Verilator. 
+
+------------------------------
+For cmsat-2.9.9
+$  cd build
+$  ../configure
+$  make
+-------------------------------
+For cudd-2.5.0
+$  makecd obj/
+$  make
+-------------------------------
+For lingeling 
+$  ./configure.sh && make 
+-------------------------------
+For minisat 
+$  cd minisat/
+$  export MROOT=`pwd`
+$  cd core/
+$  make libr
+-------------------------------
+In source/src
+make 
+-------------------------------
