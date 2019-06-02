@@ -1,10 +1,13 @@
-# Probabilistic SAT (PSAT) attack
+# Probabilistic SAT (PSAT) Attack
 
-This is a probabilistic SAT attack tool developed on top of the SAT attack code originally developed by 
-Pramod Subramanyani (the latter is available at https://bitbucket.org/spramod/host15-logic-encryption).
+This is an attack coping with probabilistic and polymorphic locking/camouflaging, developed on top of the SAT attack code originally developed by
+Pramod Subramanyani. The latter is available at https://bitbucket.org/spramod/host15-logic-encryption
 
-We provide the binary of the attack located in */bin* and associated benchmarks in */benchmarks*. The complete source code is also available.
-This binary has been tested on 64-bit Ubuntu 16.04 LTS. To run the binary, default C++ libraries are required as well as OpenMP. Also run
+The code here is not necessarily in sync with Pramod's code -- please revisit the above repository every now and then and merge useful edits
+yourself!
+
+We provide a pre-compiled binary in */bin* and associated benchmarks in */benchmarks*. The complete source code is also available.  This binary
+has been tested on 64-bit Ubuntu 16.04 LTS. To run the binary, default C++ libraries are required as well as OpenMP. Also run
 	*ldd bin/sld*
 for more details.
 
@@ -40,7 +43,7 @@ The penultimate output line is the inferred key value.
 
 
 We enable the probabilistic computation internally, so the user has to provide a corresponding file (*.stoch*, residing in the same folder as the locked/camouflaged netlist). Examples can be found in the directory
-	*benchmarks/stoch*.
+	*benchmarks/PSAT/*.
 
 A short example is also given below:
 
