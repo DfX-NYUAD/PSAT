@@ -7,9 +7,9 @@ The code here is not necessarily in sync with Pramod's code -- please revisit th
 yourself!
 
 We provide a pre-compiled binary in */bin* and associated benchmarks in */benchmarks*. The complete source code is also available.  This binary
-has been tested on 64-bit Ubuntu 16.04 LTS. To run the binary, default C++ libraries are required as well as OpenMP. Also run
+has been tested on 64-bit Ubuntu 16.04 LTS and 18.04 LTS. To run the binary, default C++ libraries are required as well as OpenMP. Some versions of flex don't work well; 2.6.3 and 2.6.4 are found to be working. Also run
 	*ldd bin/sld*
-for more details.
+for more details on which libraries are required.
 
 To invoke the attack use the *sld* command in the following manner:
 
